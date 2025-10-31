@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Header({ cartCount, onCartClick, isCartOpen }) {
   return (<>
-    <header>
+    <header className='site-header'>
       <div className='container header-inner'>
         <span className='logo'>House Shop</span>
         <div className='header-actions'>
@@ -20,7 +20,7 @@ export default function Header({ cartCount, onCartClick, isCartOpen }) {
           </button>
         </div>
       </div>
-      <div className='presentation'></div>
     </header>
+    <div className='presentation'></div>
   </>)
 }
