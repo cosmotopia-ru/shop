@@ -1,6 +1,23 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 export default function Cart({ items, onQtyChange, onRemove, onClear, isOpen, onClose }) {
+  const closeButtonRef = useRef(null)
+  const previouslyFocusedRef = useRef(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      previouslyFocusedRef.current = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
+
+      if (closeButtonRef.current) {
+        closeButtonRef.current.focus()
+      }
+    } else if (previouslyFocusedRef.current) {
+      previouslyFocusedRef.current.focus()
+    }
+  }, [isOpen])
+
   if (!isOpen) {
     return null
   }
@@ -24,7 +41,13 @@ export default function Cart({ items, onQtyChange, onRemove, onClear, isOpen, on
       >
         <div className="cart-modal-header">
           <h2 id="cart-title">Your cart</h2>
-          <button type="button" className="cart-close" onClick={onClose} aria-label="Close cart">
+          <button
+            type="button"
+            className="cart-close"
+            onClick={onClose}
+            aria-label="Close cart"
+            ref={closeButtonRef}
+          >
             ×
           </button>
         </div>
