@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ProductList from "./components/ProductList";
@@ -13,6 +13,7 @@ function App() {
   ]), [])
 
   const [cart, setCart] = useState([]) // [{product, qty}]
+  const [isCartOpen, setCartOpen] = useState(false)
 
   const addToCart = useCallback((product) => {
     setCart((prev) => {
@@ -34,14 +35,37 @@ function App() {
 
   const clearCart = useCallback(() => setCart([]), [])
 
+  const openCart = useCallback(() => setCartOpen(true), [])
+  const closeCart = useCallback(() => setCartOpen(false), [])
+
+  useEffect(() => {
+    if (!isCartOpen) return
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setCartOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isCartOpen])
+
   const cartCount = cart.reduce((sum, it) => sum + it.qty, 0)
 
   return (<>
-    <Header cartCount={cartCount} />
+    <Header cartCount={cartCount} onCartClick={openCart} isCartOpen={isCartOpen} />
     <main>
       <ProductList products={products} onAdd={addToCart} />
-      <Cart items={cart} onQtyChange={changeQty} onRemove={removeItem} onClear={clearCart} />
     </main>
+    <Cart
+      items={cart}
+      onQtyChange={changeQty}
+      onRemove={removeItem}
+      onClear={clearCart}
+      isOpen={isCartOpen}
+      onClose={closeCart}
+    />
     <Footer />
   </>);
 }
